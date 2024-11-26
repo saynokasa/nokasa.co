@@ -37,17 +37,16 @@ export default function HowItWorks() {
       <div className="relative z-10 max-w-[865px] mx-auto text-center">
         <h1 className="text-3xl font-bold mb-4">How It Works</h1>
         <p className="text-gray-600 mb-12">
-          Lorem ipsum dolor sit amet consectetur. Nisi neque posuere etiam.
+          Simple steps for effortless recycling and rewards
         </p>
         <div className="relative space-y-8 inline-block">
           {steps.map((step, index) => (
             <div key={index} className="relative flex flex-col items-center">
               {index !== steps.length - 1 && (
                 <div
-                className={`absolute top-full ${
-                  index % 2 === 0 ? "left-10" : "right-10"
-                } flex justify-center`}
-        
+                  className={`absolute top-full ${index % 2 === 0 ? "left-10" : "right-10"
+                    } flex justify-center`}
+
                 >
                   <img
                     src={`/assets/howitworks/dottedline.svg`}
@@ -85,11 +84,11 @@ export default function HowItWorks() {
 
 
         <div className="mx-auto mt-12 w-[245px]">
-        <Link href="#form" passHref scroll={true}>
-          <button className="px-6 py-3 w-[245px] border-2 border-[#6CAE73] text-[#387942] bg-transparent shadow hover:bg-[#387942] hover:text-white hover:border-[#387942] transition-all duration-300 ease-in-out">
-            Book a Slot
-          </button>
-        </Link>
+          <Link href="#form" passHref scroll={true}>
+            <button className="px-6 py-3 w-[245px] border-2 border-[#6CAE73] text-[#387942] bg-transparent shadow hover:bg-[#387942] hover:text-white hover:border-[#387942] transition-all duration-300 ease-in-out">
+              Book a Slot
+            </button>
+          </Link>
         </div>
       </div>
     </div>

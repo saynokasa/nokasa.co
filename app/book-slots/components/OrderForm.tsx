@@ -74,7 +74,8 @@ export default function OrderForm() {
             <div className='max-w-[900px] mx-auto z-40'>
                 <div>
                     <h3 className='text-[40px] font-semibold leading-[48px] text-[#313131]'>Book your pickup slot</h3>
-                    <p className='text-lg py-2 text-[#3D4A3D]'>Lorem ipsum dolor, sit amet consectetur adipisicing elit. In, porro.</p>
+                    <p className='text-lg py-2 text-[#3D4A3D]'>Schedule your pickup slot for hassle-free recycling and a greener tomorrow
+                    </p>
                 </div>
                 <div className='mt-2 md:grid grid-cols-2 pb-[350px] md:pb-0'>
                     <div className='order-2 z-40'>

@@ -1,4 +1,3 @@
-import dynamic from 'next/dynamic';
 import NavBar from "./components/home/NavBar";
 import Hero from "./components/home/Hero";
 import Footer from './components/common/Footer';

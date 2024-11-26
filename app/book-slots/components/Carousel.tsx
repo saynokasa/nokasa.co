@@ -64,7 +64,7 @@ export default function Carousel() {
                 What we accept
               </h3>
               <p className="text-white md:text-lg">
-                Lorem ipsum dolor sit amet consectetur. Nisi neque posuere etiam.
+              Explore the items that you can hand over to us
               </p>
             </div>
             <div className="gap-4 block relative mx-3">

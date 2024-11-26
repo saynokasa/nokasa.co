@@ -36,14 +36,14 @@ export default function Footer() {
           <div className="text-sm font-inter font-medium leading-4 text-[#354E3B]">
             <div className="grid grid-cols-2 md:block">
               <Link
-                href="https://nokasa.co/#companies"
+                href="./#companies"
                 className="block my-4 pr-6 md:pr-0 group relative w-max scroll-smooth"
               >
                 For companies
                 <span className="absolute -bottom-1 right-0 w-0 transition-all h-0.5 bg-[#E3803B] group-hover:w-full"></span>
               </Link>
               <Link
-                href="https://nokasa.co/#business"
+                href="./#business"
                 className="block my-4 group relative w-max scroll-smooth"
               >
                 For scrap dealers
@@ -52,14 +52,14 @@ export default function Footer() {
             </div>
             <div className="grid grid-cols-2 md:block">
               <Link
-                href="https://nokasa.co/#works"
+                href="./#works"
                 className="block my-4 pr-6 md:pr-0 group relative w-max scroll-smooth"
               >
                 How it works
                 <span className="absolute -bottom-1 right-0 w-0 transition-all h-0.5 bg-[#E3803B] group-hover:w-full"></span>
               </Link>
               <Link
-                href="https://nokasa.co/#contact"
+                href="./#contact"
                 className="block my-4 group relative w-max scroll-smooth"
               >
                 Contact us
@@ -68,12 +68,12 @@ export default function Footer() {
             </div>
             <div className="grid grid-cols-2  md:hidden">
               <Link
-                href="https://nokasa.co/privacy"
+                href="./privacy"
                 className="block my-4 pr-6"
               >
                 Privacy and Policy
               </Link>
-              <Link href="https://nokasa.co/terms-of-service" className="block my-4">
+              <Link href="./terms-of-service" className="block my-4">
                 Terms and Conditions
               </Link>
             </div>
@@ -114,11 +114,11 @@ export default function Footer() {
             NoKasa @ 2024. All rights reserved.
           </div>
           <div className="hidden md:grid grid-cols-2">
-            <Link href="https://nokasa.co/privacy" className="block my-1 m-6 group relative w-max">
+            <Link href="./privacy" className="block my-1 m-6 group relative w-max">
               Privacy and Policy
               <span className="absolute -bottom-1 right-0 w-0 transition-all h-0.5 bg-[#E3803B] group-hover:w-full"></span>
             </Link>
-            <Link href="https://nokasa.co/terms-of-service" className="block my-1 m-6 group relative w-max">
+            <Link href="./terms-of-service" className="block my-1 m-6 group relative w-max">
               Terms and Conditions
               <span className="absolute -bottom-1 right-0 w-0 transition-all h-0.5 bg-[#E3803B] group-hover:w-full"></span>
             </Link>
