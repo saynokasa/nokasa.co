@@ -10,6 +10,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@faker-js/faker": "^9.0.2",
     "@prisma/client": "^5.21.1",
     "axios": "^1.7.3",
@@ -22,6 +23,7 @@
     "firebase-admin": "^12.7.0",
     "google-auth-library": "^9.14.2",
     "jsonwebtoken": "^9.0.2",
+    "lottie-react": "^2.4.0",
     "mysql2": "^3.11.0",
     "next": "^14.2.5",
     "otp-generator": "^4.0.1",

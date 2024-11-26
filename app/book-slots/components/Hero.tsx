@@ -2,7 +2,7 @@ import Link from 'next/link'
 import React from 'react'
 export default function Hero() {
   return (
-    <div className='bg-hero h-screen py-[87px] bg-cover bg-center flex items-center'>
+    <div className='bg-hero1 h-screen py-[87px] bg-cover bg-center flex items-center'>
       <div className='max-w-[770px] px-5 mx-auto text-white text-center'>
         <h2 className='text-[46px] leading-[52px] tracking-[-2px] font-semibold md:text-[72px] md:leading-[79px]'>Together, let’s make a change!</h2>
         <p className='text-base tracking-[1px] md:text-xl my-8'>Got scrap? Sell your recyclables to us and fuel the circular economy</p>

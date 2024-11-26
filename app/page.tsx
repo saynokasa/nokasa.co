@@ -1,24 +1,26 @@
-// import HowItWorks from "./components/HowItWorks";
-// import NavBar from "./components/NavBar";
-// import Footer from "./components/Footer";
-// import OrderForm from "./components/OrderForm";
-// import Hero from "./components/Hero";
+import dynamic from 'next/dynamic';
+import NavBar from "./components/home/NavBar";
+import Hero from "./components/home/Hero";
+import Footer from './components/common/Footer';
+import Benefits from './components/home/Benefits';
+import Partner from './components/home/Partner';
+import HowItWorks from './components/home/HowItWorks';
+import Contact from './components/home/Contact';
+import Recycle from './components/home/Recycle';
 
-import React from "react";
-
-// import Carousel from "./components/Carousel";
 export default function Home() {
   return (
-        <>
-        <div className="overflow-hidden">
-          <h1>hi</h1>
-        {/* <NavBar/>
-        <Hero/>
-        <HowItWorks/>
-        <Carousel/>
-        <OrderForm/>
-        <Footer/> */}
-        </div>
-        </>
+    <>
+      <div className="overflow-hidden max-w-[1920px] m-auto bg-[#f7f6f1]">
+        <NavBar />
+        <Hero />
+        <Recycle />
+        <Partner />
+        <Benefits />
+        <HowItWorks />
+        <Contact />
+        <Footer/>
+      </div>
+    </>
   );
 }
