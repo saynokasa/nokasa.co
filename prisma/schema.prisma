@@ -1,0 +1,389 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum EntityType {
+  USER
+  VENDOR
+  AGENT
+  ADMIN
+}
+
+enum VehicleType {
+  TRUCK
+  VAN
+  MOTORCYCLE
+}
+
+enum AgentStatus {
+  AVAILABLE
+  BUSY
+  OFFLINE
+}
+
+enum RewardSystem {
+  POINTS
+  CASHBACK
+  TIER
+}
+
+enum OrderStatus {
+  NEW
+  ACCEPTED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
+
+enum TransactionType {
+  PURCHASE
+  REFUND
+  ADJUSTMENT
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CASH
+  CREDIT_CARD
+  DEBIT_CARD
+  UPI
+  NET_BANKING
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  ERROR
+}
+
+enum AddressType {
+  HOME
+  WORK
+  OTHER
+}
+
+model Otp {
+  id              Int       @id @default(autoincrement()) @db.UnsignedInt
+  entityId        Int       @db.UnsignedInt
+  otp            String    @db.Char(6)
+  expiresAt      DateTime  @db.Timestamp(0)
+  isVerified     Boolean   @default(false)
+  attempts       Int       @default(0) @db.UnsignedTinyInt
+  createdAt      DateTime  @default(now()) @db.Timestamp(0)
+
+  entity         Entity    @relation(fields: [entityId], references: [id])
+
+  @@index([entityId, isVerified])
+  @@index([otp, isVerified])
+  @@index([expiresAt])
+}
+
+model Entity {
+  id            Int            @id @default(autoincrement()) @db.UnsignedInt
+  firebaseUid   String?        @unique @db.VarChar(128)
+  phone         String         @db.VarChar(15)
+  otps          Otp[]
+  type          EntityType
+  createdAt     DateTime       @default(now()) @db.Timestamp(0)
+  updatedAt     DateTime?      @updatedAt @db.Timestamp(0)
+  isActive      Boolean        @default(true)
+  deletedAt     DateTime?      @db.Timestamp(0)
+  
+  addresses     Address[]
+  agent         Agent?
+  notifications Notification[]
+  transactions  Transaction[]
+  OrderCancelAndRejectHistory OrderCancelAndRejectHistory[]
+  user          User?
+  vendor        Vendor?
+
+  @@unique([phone, type], name: "phone_type")
+  @@index([id, type], name: "idx_entity_type")
+  @@index([id, phone])
+  @@index([phone, type], name: "idx_entity_lookup")
+  @@index([type, isActive], name: "idx_entity_type_active")
+  @@index([type, deletedAt], name: "idx_entity_type_deleted")
+  @@index([firebaseUid, isActive], name: "idx_entity_firebase")
+  @@index([phone, type, isActive], name: "idx_entity_auth_lookup")  // Removed password from this index
+}
+
+model Vendor {
+  id                 Int         @id @default(autoincrement()) @db.UnsignedInt
+  entityId           Int         @unique @db.UnsignedInt
+  name               String      @db.VarChar(100)
+  businessName       String      @db.VarChar(100)
+  businessLicense    String      @db.VarChar(50)
+  gstNumber          String      @db.VarChar(50)
+  rating             Decimal     @default(0.00) @db.Decimal(3, 2)
+  acceptedWasteTypes Json        @db.Json
+  serviceAreas       Json        @db.Json
+  bankName           String      @default("PENDING") @db.VarChar(50)
+  accountName        String      @default("PENDING") @db.VarChar(100)
+  accountNumber      String      @default("PENDING") @db.VarChar(20)
+  isDeleted          Boolean     @default(false)
+  deletedAt          DateTime?   @db.Timestamp(0)
+  createdAt          DateTime    @default(now()) @db.Timestamp(0)
+  updatedAt          DateTime?   @updatedAt @db.Timestamp(0)
+
+  entity             Entity      @relation(fields: [entityId], references: [id], onDelete: NoAction)
+  agents             Agent[]
+  orders             Order[]
+  vendorPricings     VendorPricing[]
+  vendorHistory      VendorHistory[]
+
+  @@unique([entityId, isDeleted], name: "entityId_isDeleted")
+  @@index([rating], name: "idx_vendor_rating")
+  @@index([isDeleted, entityId], name: "idx_vendor_deleted_status")
+  @@index([businessName], name: "idx_vendor_business")
+  @@index([entityId, isDeleted], name: "idx_vendor_entity_status")
+  @@index([entityId, isDeleted])
+}
+
+model Agent {
+  id            Int             @id @default(autoincrement()) @db.UnsignedInt
+  entityId      Int             @unique @db.UnsignedInt
+  vendorId      Int             @db.UnsignedInt
+  name          String          @db.VarChar(100)
+  vehicleType   VehicleType
+  vehicleNumber String          @db.VarChar(20)
+  status        AgentStatus     @default(OFFLINE)
+  rating        Decimal         @default(0.00) @db.Decimal(3, 2)
+  isDeleted     Boolean         @default(false)
+  deletedAt     DateTime?       @db.Timestamp(0)
+  createdAt     DateTime        @default(now()) @db.Timestamp(0)
+  updatedAt     DateTime?       @updatedAt @db.Timestamp(0)
+
+  entity        Entity          @relation(fields: [entityId], references: [id], onDelete: NoAction)
+  vendor        Vendor          @relation(fields: [vendorId], references: [id])
+  vendorHistory VendorHistory[]
+  orders        Order[]
+
+  @@index([id, vendorId])
+  @@index([id, isDeleted])
+  @@index([vendorId, isDeleted])
+  @@index([vendorId, status, isDeleted], name: "idx_agent_vendor_status_combined")
+  @@index([entityId, isDeleted], name: "idx_agent_active")
+  @@index([status, vendorId], name: "idx_agent_availability")
+  @@index([entityId, isDeleted])
+  @@index([vendorId, isDeleted, name], name: "idx_agent_vendor_name")
+}
+
+model VendorHistory {
+  id        Int       @id @default(autoincrement()) @db.UnsignedInt
+  agentId   Int       @db.UnsignedInt
+  vendorId  Int       @db.UnsignedInt
+  isActive  Boolean   @default(true)
+  startDate DateTime  @default(now()) @db.Timestamp(0)
+  endDate   DateTime? @db.Timestamp(0)
+
+  agent     Agent     @relation(fields: [agentId], references: [id])
+  vendor    Vendor    @relation(fields: [vendorId], references: [id])
+
+  @@index([agentId, isActive], name: "idx_history_agent")
+  @@index([vendorId, isActive], name: "idx_history_vendor")
+  @@index([startDate, endDate], name: "idx_history_date_range")
+}
+
+model User {
+  id        Int       @id @default(autoincrement()) @db.UnsignedInt
+  entityId  Int       @unique @db.UnsignedInt
+  name      String    @db.VarChar(100)
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime? @db.Timestamp(0)
+  createdAt DateTime  @default(now()) @db.Timestamp(0)
+  updatedAt DateTime? @updatedAt @db.Timestamp(0)
+
+  entity    Entity    @relation(fields: [entityId], references: [id], onDelete: NoAction)
+  orders    Order[]
+
+  @@index([id], name: "idx_user_lookup")
+  @@index([isDeleted, entityId], name: "idx_user_status")
+}
+
+model Application {
+  id           Int          @id @default(autoincrement()) @db.UnsignedInt
+  name         String       @db.VarChar(100)
+  rewardSystem RewardSystem
+  rewardFactor Decimal      @db.Decimal(5, 2)
+  createdAt    DateTime     @default(now()) @db.Timestamp(0)
+  updatedAt    DateTime?    @updatedAt @db.Timestamp(0)
+  
+  orders       Order[]
+
+  @@index([name], name: "idx_application_name")
+}
+
+model WasteType {
+  id             Int             @id @default(autoincrement()) @db.UnsignedInt
+  name           String          @unique @db.VarChar(50)
+  
+  vendorPricings VendorPricing[]
+
+  @@index([id])
+  @@index([name], name: "idx_wastetype_name")
+}
+
+model VendorPricing {
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  vendorId    Int       @db.UnsignedInt
+  wasteTypeId Int       @db.UnsignedInt
+  postalCode  String    @db.Char(6)
+  price       Decimal   @db.Decimal(10, 2)
+
+  vendor      Vendor    @relation(fields: [vendorId], references: [id], onDelete: NoAction)
+  wasteType   WasteType @relation(fields: [wasteTypeId], references: [id], onDelete: NoAction)
+
+  @@unique([vendorId, wasteTypeId, postalCode], name: "unique_vendor_waste_postal")
+  @@index([vendorId, wasteTypeId])
+  @@index([wasteTypeId, price])
+  @@index([wasteTypeId], name: "idx_pricing_wastetype")
+  @@index([postalCode], name: "idx_pricing_postal")
+}
+
+model Order {
+  id                  Int      @id @default(autoincrement()) @db.UnsignedInt
+  userId              Int      @db.UnsignedInt
+  vendorId            Int?     @db.UnsignedInt
+  agentId             Int?     @db.UnsignedInt
+  applicationId       Int      @db.UnsignedInt
+  items               Json     @db.Json
+  status              OrderStatus
+  scheduledPickupTime DateTime @db.Timestamp(0)
+  actualPickupTime    DateTime? @db.Timestamp(0)
+  estimatedWeight     Decimal   @db.Decimal(10, 2)
+  actualWeight        Decimal?  @db.Decimal(10, 2)
+  pickupAddressId     Int       @db.UnsignedInt
+  otp                 String?   @db.Char(6)
+  rating              Int?      @db.UnsignedTinyInt
+  reviewComment       String?   @db.Text
+  createdAt           DateTime  @default(now()) @db.Timestamp(0)
+  updatedAt           DateTime? @updatedAt @db.Timestamp(0)
+
+  user                User      @relation(fields: [userId], references: [id], onDelete: NoAction)
+  vendor              Vendor?   @relation(fields: [vendorId], references: [id], onDelete: NoAction)
+  agent               Agent?    @relation(fields: [agentId], references: [id], onDelete: NoAction)
+  application         Application @relation(fields: [applicationId], references: [id], onDelete: NoAction)
+  pickupAddress       Address     @relation(fields: [pickupAddressId], references: [id])
+  OrderCancelAndRejectHistory OrderCancelAndRejectHistory[]
+  transactions        Transaction[]
+
+  @@index([id])
+  @@index([vendorId])
+  @@index([userId])
+  @@index([vendorId, userId])
+  @@index([vendorId, agentId])
+  @@index([id, status])
+  @@index([vendorId, id])
+  @@index([id, status, vendorId])
+  @@index([id, status, agentId])
+  @@index([vendorId, scheduledPickupTime])
+  @@index([vendorId, status, actualPickupTime])
+  @@index([vendorId, status, scheduledPickupTime], name: "idx_order_vendor_status")
+  @@index([agentId, status, scheduledPickupTime], name: "idx_order_agent_status")
+  @@index([userId, status], name: "idx_order_user")
+  @@index([status, scheduledPickupTime], name: "idx_order_schedule")
+  @@index([pickupAddressId], name: "idx_order_address")
+}
+
+model OrderCancelAndRejectHistory {
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  orderId     Int       @db.UnsignedInt
+  reason      String    @db.Text
+  entityId    Int       @db.UnsignedInt
+  cancelledAt DateTime? @db.Timestamp(0)
+  rejectedAt  DateTime? @db.Timestamp(0)
+
+  order       Order     @relation(fields: [orderId], references: [id])
+  entity      Entity    @relation(fields: [entityId], references: [id])
+
+  @@index([orderId], name: "idx_history_order_simple")
+  @@index([entityId], name: "idx_history_entity")
+  @@index([cancelledAt], name: "idx_history_cancelled")
+  @@index([rejectedAt], name: "idx_history_rejected")
+  @@index([orderId, rejectedAt, cancelledAt], name: "idx_history_order_composite")
+  @@index([orderId, rejectedAt])
+  @@index([entityId, rejectedAt])
+}
+
+model Transaction {
+  id            Int               @id @default(autoincrement()) @db.UnsignedInt
+  orderId       Int               @db.UnsignedInt
+  entityId      Int               @db.UnsignedInt
+  invoiceNumber String            @unique @db.VarChar(50)
+  amount        Decimal           @db.Decimal(10, 2)
+  type          TransactionType
+  status        TransactionStatus
+  date          DateTime          @db.Timestamp(0)
+  paymentMethod PaymentMethod
+
+  entity        Entity            @relation(fields: [entityId], references: [id], onDelete: NoAction)
+  order         Order             @relation(fields: [orderId], references: [id], onDelete: NoAction)
+  taxDetails    TaxDetails?
+
+  @@index([entityId, status], name: "idx_transaction_entity_status")
+  @@index([orderId, status], name: "idx_transaction_order_status")
+  @@index([date], name: "idx_transaction_date")
+  @@index([orderId, status, date], name: "idx_transaction_vendor_date")
+  @@index([invoiceNumber], name: "idx_transaction_invoice")
+  @@index([invoiceNumber, orderId])
+}
+
+model TaxDetails {
+  id                Int         @id @default(autoincrement()) @db.UnsignedInt
+  transactionId     Int         @unique @db.UnsignedInt
+  gstRate           Decimal     @db.Decimal(5, 2)
+  cgstAmount        Decimal     @db.Decimal(10, 2)
+  sgstAmount        Decimal     @db.Decimal(10, 2)
+  igstAmount        Decimal     @db.Decimal(10, 2)
+  totalTaxableValue Decimal     @db.Decimal(10, 2)
+
+  transaction       Transaction @relation(fields: [transactionId], references: [id], onDelete: NoAction)
+
+  @@index([transactionId], name: "idx_tax_transaction")
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement()) @db.UnsignedInt
+  entityId  Int              @db.UnsignedInt
+  message   String           @db.Text
+  type      NotificationType
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now()) @db.Timestamp(0)
+
+  entity    Entity           @relation(fields: [entityId], references: [id], onDelete: NoAction)
+
+  @@index([entityId, isRead], name: "idx_notification_status")
+  @@index([entityId, createdAt], name: "idx_notification_date")
+}
+
+model Address {
+  id         Int         @id @default(autoincrement()) @db.UnsignedInt
+  entityId   Int         @db.UnsignedInt
+  street     String      @db.VarChar(255)
+  city       String      @db.VarChar(100)
+  state      String      @db.VarChar(100)
+  postalCode String      @db.Char(6)
+  country    String      @db.VarChar(100)
+  latitude   Float?      @db.Float
+  longitude  Float?      @db.Float
+  type       AddressType
+  isPrimary  Boolean     @default(false)
+
+  entity     Entity      @relation(fields: [entityId], references: [id], onDelete: NoAction)
+  orders     Order[]
+
+  @@index([entityId, type], name: "idx_address_entity_type")
+  @@index([postalCode], name: "idx_address_postal")
+  @@index([entityId, isPrimary], name: "idx_address_primary")
+}
