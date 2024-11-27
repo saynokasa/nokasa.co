@@ -24,7 +24,7 @@ const table: Table[] = [
     class2: "top-16",
     image: "HowItWork02",
     title: "Users book a pickup slot",
-    description: "Users can easily schedule a pickup at their convenience,choosing a time slot that fits their schedule."
+    description: "Users can easily schedule a pickup at their convenience, choosing a time slot that fits their schedule."
   },
   {
     class1: "pl-8",
@@ -47,7 +47,7 @@ const table: Table[] = [
     title: "Go green together",
     description: "Celebrate our joint environmental efforts. Every recycling action counts towards having a better earth."
   },
-]
+];
 
 export default function HowItWorks() {
   const ref = useRef<HTMLDivElement>(null);
@@ -94,7 +94,7 @@ export default function HowItWorks() {
 
     if (inView) {
       currentElement.style.animation = "none";
-      currentElement.offsetHeight; 
+      currentElement.offsetHeight; // Trigger reflow
       currentElement.style.animation = "";
       handleAnimationStart();
     } else {
@@ -107,10 +107,12 @@ export default function HowItWorks() {
   }, [inView]);
 
   const handleAnimationClick = () => {
-    const currentElement = ref.current;
-    currentElement.style.animationPlayState = animationPaused ? "running" : "paused";
-    setAnimationPaused(!animationPaused);
+    if (ref.current) {
+      ref.current.style.animationPlayState = animationPaused ? "running" : "paused";
+      setAnimationPaused(prev => !prev);
+    }
   };
+
   return (
     <div className="h-[650px]" id="works">
       <div className="text-center py-4">
@@ -146,7 +148,7 @@ export default function HowItWorks() {
           </div>
           <div className="grid grid-cols-5 gap-16 z-10 absolute right-0 w-full h-full text-center">
             {table.map((item, index) => (
-              <HowItWorksBoxes key={index} prop={item} />
+              <HowItWorksBoxes key={index} {...item} />
             ))}
           </div>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import Image from "next/image";
 
 export default function Carousel() {
   const totalItems = 4;
@@ -54,9 +55,7 @@ export default function Carousel() {
 
   return (
     <div className="relative mb-10">
-      <div className="bg-hover bg-cover h-3/5 bg-[#0AC05E] text-white" style={{
-        backgroundPosition: "40% 12%",
-      }}>
+      <div className="bg-hover bg-cover h-3/5 bg-[#0AC05E] text-white" style={{ backgroundPosition: "40% 12%" }}>
         <div className="relative max-w-[1100px] mx-auto h-full flex flex-col z-10 pt-10">
           <div className="md:flex justify-between items-center mb-12">
             <div className="text-center md:text-left px-3 mx-auto md:ml-0">
@@ -64,13 +63,13 @@ export default function Carousel() {
                 What we accept
               </h3>
               <p className="text-white md:text-lg">
-              Explore the items that you can hand over to us
+                Explore the items that you can hand over to us
               </p>
             </div>
             <div className="gap-4 block relative mx-3">
               <button
                 onClick={handlePrev}
-                className="absolute left-0 md:relative  md:left-auto mx-5 bg-transparent border-2 rounded-full p-3 shadow-lg transition-all duration-300 ease-in-out opacity-60 text-white border-white hover:opacity-100"
+                className="absolute left-0 md:relative md:left-auto mx-5 bg-transparent border-2 rounded-full p-3 shadow-lg transition-all duration-300 ease-in-out opacity-60 text-white border-white hover:opacity-100"
               >
                 <FaArrowLeft />
               </button>
@@ -91,19 +90,19 @@ export default function Carousel() {
                   className="text-center w-full md:w-1/2 lg:w-1/4 max-w-[500px] h-[300px] mx-6 sm:mx-0 hover:-translate-y-10 transition-transform"
                 >
                   <div className="bg-gradient-to-br from-[#D9F9DA] via-white to-white rounded-lg shadow-lg p-4 flex-shrink-0 relative transition-transform duration-500 ease-in-out transform h-40">
-                    <img
+                    <Image
                       src={`/assets/carousel/image${itemIndex + 1}.svg`}
                       alt={items[itemIndex]}
                       className="w-full h-40 object-contain absolute -top-16 z-20"
+                      width={500} 
+                      height={200} 
                     />
                   </div>
                   <h4 className="text-lg font-semibold mt-4 text-[#030C1B]">{items[itemIndex]}</h4>
                 </div>
               ))}
-
             </div>
           </div>
-
 
           <div className="flex justify-center mt-0 space-x-2">
             {Array.from({ length: totalItems }).map((_, index) => (

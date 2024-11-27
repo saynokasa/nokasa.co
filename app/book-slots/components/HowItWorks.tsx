@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import Image from "next/image";
 
 export default function HowItWorks() {
   const steps = [
@@ -46,12 +47,13 @@ export default function HowItWorks() {
                 <div
                   className={`absolute top-full ${index % 2 === 0 ? "left-10" : "right-10"
                     } flex justify-center`}
-
                 >
-                  <img
+                  <Image
                     src={`/assets/howitworks/dottedline.svg`}
                     alt="Dotted Connector"
                     className="h-full"
+                    width={10} 
+                    height={10} 
                   />
                 </div>
               )}
@@ -61,10 +63,12 @@ export default function HowItWorks() {
                   {String(index + 1).padStart(2, '0')}
                 </div>
                 <div className="flex items-center justify-center h-16 w-16 min-h-[64px] min-w-[64px] rounded-lg bg-green-100">
-                  <img
+                  <Image
                     src={`/assets/howitworks/${step.icon}.svg`}
                     alt={step.title}
                     className="h-8 w-8 object-contain"
+                    width={32} // Adjust width as needed
+                    height={32} // Adjust height as needed
                   />
                 </div>
                 <div className="text-left">
@@ -79,9 +83,6 @@ export default function HowItWorks() {
             </div>
           ))}
         </div>
-
-
-
 
         <div className="mx-auto mt-12 w-[245px]">
           <Link href="#form" passHref scroll={true}>
