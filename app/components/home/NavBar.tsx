@@ -56,7 +56,7 @@ export default function NavBar() {
           </div>
           <div>
             <div
-              className={`flex-1 justify-self-center md:block md:pb-0 md:mt-0 transition-all duration-500 ease-in-out transform ${
+              className={`flex-1 justify-self-center md:block md:pb-0 md:mt-0 transition-all duration-500 ease-in-out transform w-screen ${
                 navbar ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
               } md:max-h-full md:opacity-100`}
             >

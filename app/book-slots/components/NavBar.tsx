@@ -83,7 +83,7 @@ export default function NavBar() {
             >
               <ul className="text-white font-inter md:h-auto items-center justify-center text-center md:flex pb-8 md:pb-0">
                 <li className="pt-6 md:py-0 md:pr-8">
-                  <Link href="" passHref legacyBehavior>
+                  <Link href="./" passHref legacyBehavior>
                     <a onClick={() => setNavbar(false)} className="group relative w-max">
                       Home
                       <span className="absolute -bottom-1 right-0 w-0 transition-all h-0.5 bg-[#E3803B] group-hover:w-full"></span>
@@ -91,7 +91,7 @@ export default function NavBar() {
                   </Link>
                 </li>
                 <li className="pt-6 md:py-0 md:pr-8">
-                  <Link href="https://nokasa.co/blog" passHref legacyBehavior>
+                  <Link href="./blog" passHref legacyBehavior>
                     <a onClick={() => setNavbar(false)} className="group relative w-max">
                       Blog
                       <span className="absolute -bottom-1 right-0 w-0 transition-all h-0.5 bg-[#E3803B] group-hover:w-full"></span>
